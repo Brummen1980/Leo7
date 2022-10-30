@@ -61,6 +61,7 @@ public class NameSurferGraph extends GCanvas
         removeAll();
         drawGrid();
         drawGraph();
+        drawGraphLegend();
     }
 
     /**
@@ -82,6 +83,19 @@ public class NameSurferGraph extends GCanvas
         drawGraphLabels(entry, colorIndex);
     }
 
+    private void drawGraphLegend() {
+        for (int i = 0; i < entryGraphData.size(); i++)
+            drawGraphLegendItem(entryGraphData.get(i), i);
+    }
+    private void drawGraphLegendItem(NameSurferEntry entry, int colorIndex) {
+        GLabel legend = new GLabel(entry.getName());
+        Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
+        legend.setColor(lineColor[colorIndex]);
+        legend.setFont(new Font("Arial", Font.BOLD, 16));
+        legend.setLocation(getWidth() - LEGEND_WIDTH_SIZE + 20, 50 + 30 * colorIndex);
+        add(legend);
+    }
+
     /**
      *
      * @param entry
@@ -89,20 +103,21 @@ public class NameSurferGraph extends GCanvas
      */
     private void drawGraphLabels(NameSurferEntry entry, int colorIndex) {
         for (int i = 0; i < NDECADES; i++) {
-            String name = entry.getName();
+            String name = "";
             int rank = entry.getRank(i);
-            int x = i * (getWidth() / NDECADES);
+            int x = i * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
             int y;
             if (rank == 0) {
                 y = getHeight() - GRAPH_MARGIN_SIZE;
-                name += " *";
+                name = "*";
             } else {
                 y = GRAPH_MARGIN_SIZE + (getHeight() - GRAPH_MARGIN_SIZE * 2) * rank / MAX_RANK;
-                name += " " + rank;
+                name += rank;
             }
             GLabel nameLabel = new GLabel(name, x, y);
             Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
             nameLabel.setColor(lineColor[colorIndex % 4]);
+            nameLabel.setFont(new Font("Arial", Font.PLAIN, 12));
             add(nameLabel);
         }
     }
@@ -116,8 +131,8 @@ public class NameSurferGraph extends GCanvas
         for (int i = 0; i < NDECADES - 1; i++) {
             int rank1 = entry.getRank(i);
             int rank2 = entry.getRank(i + 1);
-            int x1 = i * (getWidth() / NDECADES);
-            int x2 = (i + 1) * (getWidth() / NDECADES);
+            int x1 = i * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+            int x2 = (i + 1) * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
             int y1, y2;
 
             int r1 = ((rank1 - 1) >> 31);
@@ -140,19 +155,25 @@ public class NameSurferGraph extends GCanvas
      */
     private void drawGrid() {
         // Draw vertical lines
-        for (int i = 0; i < NDECADES; i++) {
+        for (int i = 0; i <= NDECADES; i++) {
             int yNorth = 0;
             int ySouth = getHeight();
-            int x = i * (getWidth() / NDECADES);
+            int x = i * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
             GLine line = new GLine(x, yNorth, x, ySouth);
             add(line);
         }
         // draw horizontal lines
         int xWest = 0;
-        int xEast = getWidth();
+        int xEast =  NDECADES * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+        //int yNorth = getHeight() - GRAPH_MARGIN_SIZE;
         int yNorth = getHeight() - GRAPH_MARGIN_SIZE;
-        GLine lineNorth = new GLine(xWest, yNorth, xEast, yNorth);
-        add(lineNorth);
+        for (int i = 0; i < 11; i++)
+        {
+            int y = yNorth - i * (getHeight() - 2 * GRAPH_MARGIN_SIZE) / 10  ;
+            GLine lineNorth = new GLine(xWest, y, xEast, y);
+            add(lineNorth);
+        }
+
         GLine lineSouth = new GLine(xWest, GRAPH_MARGIN_SIZE, xEast, GRAPH_MARGIN_SIZE);
         add(lineSouth);
         // draw decade labels
@@ -161,7 +182,7 @@ public class NameSurferGraph extends GCanvas
             String decadeValue = Integer.toString(decade);
             GLabel labelDecade = new GLabel(decadeValue);
             labelDecade.setFont(new Font("Arial", Font.BOLD, 16));
-            int x = i * (getWidth() / NDECADES);
+            int x = i * ((getWidth() - LEGEND_WIDTH_SIZE)/ NDECADES);
             labelDecade.setLocation(x, (getHeight() - labelDecade.getDescent()));
             add(labelDecade);
         }

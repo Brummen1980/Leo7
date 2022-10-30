@@ -49,4 +49,9 @@ public interface NameSurferConstants {
      */
     public static final int GRAPH_MARGIN_SIZE = 20;
 
+    /**
+     * The width of legend area
+     */
+    public  static final int LEGEND_WIDTH_SIZE = 150;
+
 }
