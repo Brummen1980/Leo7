@@ -89,10 +89,10 @@ public class NameSurferGraph extends GCanvas
     }
     private void drawGraphLegendItem(NameSurferEntry entry, int colorIndex) {
         GLabel legend = new GLabel(entry.getName());
-        Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
-        legend.setColor(lineColor[colorIndex]);
+        //Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
+        legend.setColor(lineColor[colorIndex % lineColor.length]);
         legend.setFont(new Font("Arial", Font.BOLD, 16));
-        legend.setLocation(getWidth() - LEGEND_WIDTH_SIZE + 20, 50 + 30 * colorIndex);
+        legend.setLocation(getWidth() - LEGEND_WIDTH_SIZE + 70, 50 + 30 * colorIndex);
         add(legend);
     }
 
@@ -101,7 +101,7 @@ public class NameSurferGraph extends GCanvas
      * @param entry
      * @param colorIndex
      */
-    private void drawGraphLabels(NameSurferEntry entry, int colorIndex) {
+    private void drawGraphLabels_old(NameSurferEntry entry, int colorIndex) {
         for (int i = 0; i < NDECADES; i++) {
             String name = "";
             int rank = entry.getRank(i);
@@ -115,19 +115,38 @@ public class NameSurferGraph extends GCanvas
                 name += rank;
             }
             GLabel nameLabel = new GLabel(name, x, y);
-            Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
-            nameLabel.setColor(lineColor[colorIndex % 4]);
+            //Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
+            nameLabel.setColor(lineColor[colorIndex % lineColor.length]);
             nameLabel.setFont(new Font("Arial", Font.PLAIN, 12));
             add(nameLabel);
         }
     }
+
+    private void drawGraphLabels(NameSurferEntry entry, int colorIndex) {
+        for (int i = 0; i < NDECADES; i++) {
+            String name = "";
+            int rank = entry.getRank(i);
+            if (rank == 0) continue;
+
+            int x = i * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+            int y = getHeight() - (getHeight() - GRAPH_MARGIN_SIZE * 2) * rank / MAX_RANK - GRAPH_MARGIN_SIZE;
+            name += rank;
+
+            GLabel nameLabel = new GLabel(name, x, y);
+            //Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
+            nameLabel.setColor(lineColor[colorIndex % lineColor.length]);
+            nameLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+            add(nameLabel);
+        }
+    }
+
 
     /**
      *
      * @param entry
      * @param colorIndex
      */
-    private void drawGraphLines(NameSurferEntry entry, int colorIndex) {
+    private void drawGraphLines_old(NameSurferEntry entry, int colorIndex) {
         for (int i = 0; i < NDECADES - 1; i++) {
             int rank1 = entry.getRank(i);
             int rank2 = entry.getRank(i + 1);
@@ -145,9 +164,30 @@ public class NameSurferGraph extends GCanvas
 
             GLine line = new GLine(x1, y1, x2, y2);
             Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
-            line.setColor(lineColor[colorIndex % 4]);
+            line.setColor(lineColor[colorIndex % 4 ]);
             add(line);
         }
+    }
+
+    private void drawGraphLines(NameSurferEntry entry, int colorIndex) {
+        for (int i = 0; i < NDECADES - 1; i++) {
+            int rank1 = entry.getRank(i);
+            if (rank1 == 0) continue;
+            int rank2 = entry.getRank(i + 1);
+            if (rank2 == 0) continue;
+
+            int x1 = i * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+            int x2 = (i + 1) * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+
+            int y1 = getHeight() - (getHeight() - GRAPH_MARGIN_SIZE * 2) * rank1/ MAX_RANK - GRAPH_MARGIN_SIZE;
+            int y2 = getHeight() - (getHeight() - GRAPH_MARGIN_SIZE * 2) * rank2/ MAX_RANK - GRAPH_MARGIN_SIZE;
+
+            GLine line = new GLine(x1, y1, x2, y2);
+            //Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK};
+            line.setColor(lineColor[colorIndex % lineColor.length]);
+            add(line);
+        }
+
     }
 
     /**
@@ -164,14 +204,18 @@ public class NameSurferGraph extends GCanvas
         }
         // draw horizontal lines
         int xWest = 0;
-        int xEast =  NDECADES * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES);
+        int xEast =  NDECADES * ((getWidth() - LEGEND_WIDTH_SIZE) / NDECADES) + 50;
         //int yNorth = getHeight() - GRAPH_MARGIN_SIZE;
         int yNorth = getHeight() - GRAPH_MARGIN_SIZE;
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i <= 11; i++)
         {
             int y = yNorth - i * (getHeight() - 2 * GRAPH_MARGIN_SIZE) / 10  ;
             GLine lineNorth = new GLine(xWest, y, xEast, y);
             add(lineNorth);
+            GLabel labelLevel = new GLabel(Integer.toString(100 * i));
+            labelLevel.setFont(new Font("Arial", Font.BOLD, 16));
+            labelLevel.setLocation(xEast - 45, y - 5);
+            add(labelLevel);
         }
 
         GLine lineSouth = new GLine(xWest, GRAPH_MARGIN_SIZE, xEast, GRAPH_MARGIN_SIZE);

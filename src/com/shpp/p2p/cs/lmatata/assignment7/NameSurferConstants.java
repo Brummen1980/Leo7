@@ -8,6 +8,8 @@ package com.shpp.p2p.cs.lmatata.assignment7;
  * that implements this interface can use these constants.
  */
 
+import java.awt.*;
+
 public interface NameSurferConstants {
 
     /**
@@ -52,6 +54,9 @@ public interface NameSurferConstants {
     /**
      * The width of legend area
      */
-    public  static final int LEGEND_WIDTH_SIZE = 150;
+    public  static final int LEGEND_WIDTH_SIZE = 200;
+
+    Color[] lineColor = {Color.BLUE, Color.RED, Color.MAGENTA, Color.BLACK, Color.GREEN, Color.ORANGE, Color.CYAN, Color.darkGray};
+
 
 }
